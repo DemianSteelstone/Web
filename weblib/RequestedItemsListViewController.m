@@ -6,13 +6,13 @@
 //  Copyright (c) 2012 Macsoftex. All rights reserved.
 //
 
-#import "ItemsListViewController.h"
+#import "RequestedItemsListViewController.h"
 
 #import "UITableViewCell+Helpers.h"
 
 #import "ErrorAlertView.h"
 
-@implementation ItemsListViewController
+@implementation RequestedItemsListViewController
 {
     NSMutableArray *items;
     

@@ -10,7 +10,7 @@
 
 #import "ItemsRequest.h"
 
-@interface ItemsListViewController : UITableViewController
+@interface RequestedItemsListViewController : UITableViewController
 
 @property (nonatomic,strong) ItemsRequest *itemsRequest;
 
