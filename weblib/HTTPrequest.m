@@ -75,9 +75,9 @@
 	}
 }
 
--(void)checkDwonloadedBytes:(NSMutableURLRequest*)request
+-(void)checkDownloadedBytes:(NSMutableURLRequest*)request
 {
-    NSUInteger downloadedBytes = 0;
+    unsigned long long downloadedBytes = 0;
     NSFileManager *fm = [NSFileManager defaultManager];
     if ([fm fileExistsAtPath:dataFilePath])
     {
@@ -90,7 +90,7 @@
         if (downloadedBytes > 0)
         {
             [request setHTTPMethod:@"GET"];
-            NSString *requestRange = [NSString stringWithFormat:@"bytes=%d-", downloadedBytes];
+            NSString *requestRange = [NSString stringWithFormat:@"bytes=%llu-", downloadedBytes];
             [request setValue:requestRange forHTTPHeaderField:@"Range"];
             
             _downloadedBytes = downloadedBytes;
@@ -132,7 +132,7 @@
         else
             dataFilePath = fileName;
         
-        [self checkDwonloadedBytes:theRequest];
+        [self checkDownloadedBytes:theRequest];
     }
     
 	theConnection=[[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
