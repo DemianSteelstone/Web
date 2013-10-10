@@ -152,7 +152,7 @@
         
         NSString *length = [NSString stringWithFormat:@"%d",[_body length]];
         [request setValue:length forHTTPHeaderField:@"Content-Length"];
-        NSLog(@"%@",length);
+        NSLog(@"Request body length: %@",length);
         
         NSInputStream *stream = [_body postBodyStream];
         [request setHTTPBodyStream:stream];
@@ -219,7 +219,7 @@
 -(void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     NSString *debugStr = [[NSString alloc] initWithData:recievedData encoding:NSUTF8StringEncoding];
-    NSLog(@"%@",debugStr);
+    NSLog(@"Recived data:\n%@",debugStr);
     
     [self gotResponse];
 }
