@@ -12,9 +12,10 @@
 
 @class FileQueueDownloader;
 @protocol FileQueueDownloaderDelegate <NSObject>
+@optional
+-(void)queueDownloader:(FileQueueDownloader*)downloader error:(NSError*)error file:(NSString*)url userData:(id)userData;
 -(void)queueDownloader:(FileQueueDownloader*)downloader fileDownloaded:(NSString*)url userData:(id)userData fileData:(NSData*)data;
 -(void)queueDownloader:(FileQueueDownloader*)downloader fileDownloaded:(NSString*)url userData:(id)userData filePath:(NSString*)filePath;
--(void)queueDownloader:(FileQueueDownloader*)downloader error:(NSError*)error file:(NSString*)url userData:(id)userData;
 @end
 
 @interface FileQueueDownloader : NSObject <HTTPrequestDelegate>
