@@ -17,6 +17,8 @@
 @property (nonatomic,strong) NSString *offsetParamsName;
 @property (nonatomic) int itemsInRequest;
 
+@property (nonatomic, copy) NSError*(^unexpectedContentErrorBuilder)(id content);
+
 -(id)initWithURL:(NSString*)url resourcePath:(NSString*)resourcePath;
 
 @end

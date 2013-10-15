@@ -29,6 +29,8 @@
     currentOffset = 0;
     
     _items = [NSMutableArray arrayWithCapacity:self.itemsInRequest];
+    
+    self.unexpectedContentErrorBuilder = nil;
 }
 
 -(id)initWithURL:(NSString*)url resourcePath:(NSString*)resourcePath
@@ -70,23 +72,34 @@
         }
         
         NSError *error = nil;
-        NSArray *newItems = [response parsedBody:&error];
+        
+        id parsedObject = [response parsedBody:&error];
         if (error)
         {
             [self errorInRequest:error];
             return;
         }
         
-        if (newItems.count)
+        if ([parsedObject isKindOfClass:[NSArray class]])
         {
-            currentOffset+=self.itemsInRequest;
+            NSArray *newItems = parsedObject;
+            
+            if (newItems.count)
+            {
+                currentOffset+=self.itemsInRequest;
+            }
+            else
+            {
+                [self stopRequesting];
+            }
+            
+            portionLoadedBlock(newItems,nil);
         }
-        else
+        else if (self.unexpectedContentErrorBuilder)
         {
-            [self stopRequesting];
+            [self errorInRequest:self.unexpectedContentErrorBuilder(parsedObject)];
+            return;
         }
-        
-        portionLoadedBlock(newItems,nil);
     }];
 }
 
