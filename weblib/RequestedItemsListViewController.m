@@ -12,11 +12,60 @@
 
 #import "ErrorAlertView.h"
 
+#import "ODRefreshControl.h"
+
 @implementation RequestedItemsListViewController
 {
     NSMutableArray *items;
     
     BOOL isRequestingPortion;
+    
+    ODRefreshControl *odoRefresh;
+}
+
+#define VERSION_MORE_THAN_5     [[[[UIDevice currentDevice] systemVersion] componentsSeparatedByString:@"."][0] intValue]>5
+
+-(BOOL)refreshControllIsRefreshing
+{
+    if (VERSION_MORE_THAN_5)
+        return self.refreshControl.isRefreshing;
+    
+    return odoRefresh.isRefreshing;
+}
+
+-(void)refreshControllBegin
+{
+    if (VERSION_MORE_THAN_5)
+        [self.refreshControl beginRefreshing];
+    else
+        [odoRefresh beginRefreshing];
+}
+
+-(void)refreshContrllEnd
+{
+    if (VERSION_MORE_THAN_5)
+        [self.refreshControl endRefreshing];
+    else
+        [odoRefresh endRefreshing];
+}
+
+-(void)initRefreshControll
+{
+    NSLog(@"%@",[[[UIDevice currentDevice] systemVersion] componentsSeparatedByString:@"."][0]);
+    if (VERSION_MORE_THAN_5)
+    {
+        self.refreshControl = [[UIRefreshControl alloc] init];
+        [self.refreshControl addTarget:self
+                                action:@selector(reloadData)
+                      forControlEvents:UIControlEventValueChanged];
+    }
+    else
+    {
+        odoRefresh = [[ODRefreshControl alloc] initInScrollView:self.tableView];
+        [odoRefresh addTarget:self
+                       action:@selector(reloadData)
+             forControlEvents:UIControlEventValueChanged];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -29,10 +78,7 @@
 {
     [super viewDidLoad];
     
-    self.refreshControl = [[UIRefreshControl alloc] init];
-    [self.refreshControl addTarget:self
-                            action:@selector(reloadData)
-                  forControlEvents:UIControlEventValueChanged];
+    [self initRefreshControll];
 }
 
 -(void)reloadData
@@ -53,8 +99,8 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
             isRequestingPortion = NO;
-            if (self.refreshControl.refreshing)
-                [self.refreshControl endRefreshing];
+            if ([self refreshControllIsRefreshing])
+                [self refreshContrllEnd];
             
             [self.tableView reloadData];
         });
@@ -86,7 +132,7 @@
 {
     int count = items.count;
     
-    if ((count == 0 || self.itemsRequest.isRequesting) && !self.refreshControl.refreshing)
+    if ((count == 0 || self.itemsRequest.isRequesting) && ![self refreshControllIsRefreshing])
         count++;
     
     return count;
