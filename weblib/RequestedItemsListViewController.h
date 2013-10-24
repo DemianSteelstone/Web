@@ -13,6 +13,7 @@
 @interface RequestedItemsListViewController : UITableViewController
 
 @property (nonatomic,strong) ItemsRequest *itemsRequest;
+@property (nonatomic, strong, readonly) NSArray *items;
 
 -(void)reloadData;
 

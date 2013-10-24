@@ -16,7 +16,7 @@
 
 @implementation RequestedItemsListViewController
 {
-    NSMutableArray *items;
+    NSMutableArray *_items;
     
     BOOL isRequestingPortion;
     
@@ -25,7 +25,7 @@
 
 #define VERSION_MORE_THAN_5     [[[[UIDevice currentDevice] systemVersion] componentsSeparatedByString:@"."][0] intValue]>5
 
--(BOOL)refreshControllIsRefreshing
+-(BOOL)refreshControlisRefreshing
 {
     if (VERSION_MORE_THAN_5)
         return self.refreshControl.isRefreshing;
@@ -33,7 +33,7 @@
     return odoRefresh.isRefreshing;
 }
 
--(void)refreshControllBegin
+-(void)refreshControlBegin
 {
     if (VERSION_MORE_THAN_5)
         [self.refreshControl beginRefreshing];
@@ -41,7 +41,7 @@
         [odoRefresh beginRefreshing];
 }
 
--(void)refreshContrllEnd
+-(void)refreshControlEnd
 {
     if (VERSION_MORE_THAN_5)
         [self.refreshControl endRefreshing];
@@ -49,7 +49,7 @@
         [odoRefresh endRefreshing];
 }
 
--(void)initRefreshControll
+-(void)initRefreshControl
 {
     NSLog(@"%@",[[[UIDevice currentDevice] systemVersion] componentsSeparatedByString:@"."][0]);
     if (VERSION_MORE_THAN_5)
@@ -78,19 +78,19 @@
 {
     [super viewDidLoad];
     
-    [self initRefreshControll];
+    [self initRefreshControl];
 }
 
 -(void)reloadData
 {
     [self.itemsRequest cancel];
     
-    items = [NSMutableArray array];
+    _items = [NSMutableArray array];
     
     [self.itemsRequest prepare:^(NSArray *newItems, NSError *error) {
         if (!error)
         {
-            [items addObjectsFromArray:newItems];
+            [_items addObjectsFromArray:newItems];
         }
         else
         {
@@ -99,8 +99,8 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
             isRequestingPortion = NO;
-            if ([self refreshControllIsRefreshing])
-                [self refreshContrllEnd];
+            if ([self refreshControlisRefreshing])
+                [self refreshControlEnd];
             
             [self.tableView reloadData];
         });
@@ -130,9 +130,9 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    int count = items.count;
+    int count = _items.count;
     
-    if ((count == 0 || self.itemsRequest.isRequesting) && ![self refreshControllIsRefreshing])
+    if ((count == 0 || self.itemsRequest.isRequesting) && ![self refreshControlisRefreshing])
         count++;
     
     return count;
@@ -140,8 +140,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row < items.count)
-        return [self contentCell:[items objectAtIndex:indexPath.row] tableView:tableView forIndexPath:(NSIndexPath*)indexPath];
+    if (indexPath.row < _items.count)
+        return [self contentCell:[_items objectAtIndex:indexPath.row] tableView:tableView forIndexPath:(NSIndexPath*)indexPath];
     
     if (self.itemsRequest.isRequesting)
     {
@@ -154,8 +154,8 @@
 
 -(float)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row < items.count)
-        return [self cellHeightForItem:[items objectAtIndex:indexPath.row] cellWidth:[UITableViewCell groupedCellWidth:self.interfaceOrientation]];
+    if (indexPath.row < _items.count)
+        return [self cellHeightForItem:[_items objectAtIndex:indexPath.row] cellWidth:[UITableViewCell groupedCellWidth:self.interfaceOrientation]];
     return tableView.rowHeight;
 }
 
@@ -165,8 +165,8 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if (indexPath.row < items.count)
-        [self itemSelected:[items objectAtIndex:indexPath.row]];
+    if (indexPath.row < _items.count)
+        [self itemSelected:[_items objectAtIndex:indexPath.row]];
 }
 
 #pragma mark - Overload
