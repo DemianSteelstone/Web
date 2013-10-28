@@ -102,7 +102,10 @@
             if ([self refreshControlisRefreshing])
                 [self refreshControlEnd];
             
-            [self.tableView reloadData];
+            if (self.searchDisplayController && self.searchDisplayController.isActive)
+                [self.searchDisplayController.searchResultsTableView reloadData];
+            else
+                [self.tableView reloadData];
         });
     }];
     
