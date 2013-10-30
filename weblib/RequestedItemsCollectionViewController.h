@@ -10,7 +10,7 @@
 
 #import "ItemsRequest.h"
 
-@interface RequestedItemsCollectionViewController : UICollectionViewController
+@interface RequestedItemsCollectionViewController : UICollectionViewController <UICollectionViewDelegateFlowLayout>
 
 @property (nonatomic,strong) ItemsRequest *itemsRequest;
 @property (nonatomic, strong, readonly) NSArray *items;
