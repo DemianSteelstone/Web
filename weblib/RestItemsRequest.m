@@ -50,12 +50,15 @@
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:self.requestParams];
     
-    if (self.offsetParamsName.length)
-        [params setValue:[NSString stringWithFormat:@"%d",currentOffset]
-                  forKey:self.offsetParamsName];
-    if (self.countParamName.length)
-        [params setValue:[NSString stringWithFormat:@"%d",self.itemsInRequest]
-                  forKey:self.countParamName];
+    if (self.itemsInRequest>0)
+    {
+        if (self.offsetParamsName.length)
+            [params setValue:[NSString stringWithFormat:@"%d",currentOffset]
+                      forKey:self.offsetParamsName];
+        if (self.countParamName.length)
+            [params setValue:[NSString stringWithFormat:@"%d",self.itemsInRequest]
+                      forKey:self.countParamName];
+    }
     
     return params;
 }
@@ -88,7 +91,8 @@
             {
                 currentOffset+=self.itemsInRequest;
             }
-            else
+            
+            if (!newItems.count || self.itemsInRequest<=0)
             {
                 [self stopRequesting];
             }
