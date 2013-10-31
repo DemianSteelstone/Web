@@ -15,6 +15,8 @@
 @property (nonatomic,strong) ItemsRequest *itemsRequest;
 @property (nonatomic, strong, readonly) NSArray *items;
 
+@property (nonatomic) BOOL autoDeselectRows;
+
 -(void)reloadData;
 
 -(UITableViewCell*)loadingCell:(UITableView*)tableView;

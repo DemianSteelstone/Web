@@ -23,6 +23,29 @@
     ODRefreshControl *odoRefresh;
 }
 
+-(void)setup
+{
+    self.autoDeselectRows = YES;
+}
+
+-(id)init
+{
+    if (self = [super init])
+    {
+        [self setup];
+    }
+    return self;
+}
+
+-(id)initWithCoder:(NSCoder *)aDecoder
+{
+    if (self = [super initWithCoder:aDecoder])
+    {
+        [self setup];
+    }
+    return self;
+}
+
 #define VERSION_MORE_THAN_5     [[[[UIDevice currentDevice] systemVersion] componentsSeparatedByString:@"."][0] intValue]>5
 
 -(BOOL)refreshControlisRefreshing
@@ -166,7 +189,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (self.autoDeselectRows)
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     if (indexPath.row < _items.count)
         [self itemSelected:[_items objectAtIndex:indexPath.row]];
