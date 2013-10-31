@@ -83,7 +83,7 @@
     }
     
     url = [URLParser constructURL:url params:self.params];
-    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     return [NSURL URLWithString:url];
 }
