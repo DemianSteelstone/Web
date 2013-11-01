@@ -16,6 +16,7 @@
 @property (nonatomic, strong, readonly) NSArray *items;
 
 @property (nonatomic) BOOL autoDeselectRows;
+@property (nonatomic) BOOL refreshControlEnabled;
 
 -(void)reloadData;
 

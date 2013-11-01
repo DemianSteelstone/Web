@@ -25,7 +25,8 @@
 
 -(void)setup
 {
-    self.autoDeselectRows = YES;
+    _autoDeselectRows = YES;
+    _refreshControlEnabled = YES;
 }
 
 -(id)init
@@ -74,7 +75,9 @@
 
 -(void)initRefreshControl
 {
-    NSLog(@"%@",[[[UIDevice currentDevice] systemVersion] componentsSeparatedByString:@"."][0]);
+    if (!self.refreshControl)
+        return;
+    
     if (VERSION_MORE_THAN_5)
     {
         self.refreshControl = [[UIRefreshControl alloc] init];
@@ -88,6 +91,24 @@
         [odoRefresh addTarget:self
                        action:@selector(reloadData)
              forControlEvents:UIControlEventValueChanged];
+    }
+}
+
+-(void)setRefreshControlEnabled:(BOOL)refreshControlEnabled
+{
+    _refreshControlEnabled = refreshControlEnabled;
+    
+    if (_refreshControlEnabled)
+        [self initRefreshControl];
+    else
+    {
+        if (VERSION_MORE_THAN_5)
+            self.refreshControl = nil;
+        else
+        {
+            [odoRefresh removeFromSuperview];
+            odoRefresh = nil;
+        }
     }
 }
 
