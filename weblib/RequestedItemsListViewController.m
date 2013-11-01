@@ -147,6 +147,13 @@
     }
 }
 
+-(void)setItemsRequest:(ItemsRequest *)itemsRequest
+{
+    [self.itemsRequest cancel];
+    isRequestingPortion = NO;
+    _itemsRequest = itemsRequest;
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
