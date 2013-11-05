@@ -137,7 +137,9 @@
 -(NSURLRequest*)prepareRequest
 {
     NSURL *url = [self buildRequestURL];
+#ifdef WEBLIB_DEBUG
     NSLog(@"Request url: %@",url);
+#endif
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     
     request.HTTPMethod = [self httpRequestMethod];
@@ -151,7 +153,9 @@
         
         NSString *length = [NSString stringWithFormat:@"%d",[_body length]];
         [request setValue:length forHTTPHeaderField:@"Content-Length"];
+#ifdef WEBLIB_DEBUG
         NSLog(@"Request body length: %@",length);
+#endif
         
         NSInputStream *stream = [_body postBodyStream];
         [request setHTTPBodyStream:stream];
@@ -217,8 +221,10 @@
 
 -(void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
+#ifdef WEBLIB_DEBUG
     NSString *debugStr = [[NSString alloc] initWithData:recievedData encoding:NSUTF8StringEncoding];
     NSLog(@"Recived data:\n%@",debugStr);
+#endif
     
     [self gotResponse];
 }
