@@ -75,7 +75,7 @@
 
 -(void)initRefreshControl
 {
-    if (!self.refreshControl)
+    if (!self.refreshControlEnabled)
         return;
     
     if (VERSION_MORE_THAN_5)
