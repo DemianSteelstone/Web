@@ -9,22 +9,28 @@
 #import "RequestedItemsCollectionViewController.h"
 #import "ErrorAlertView.h"
 
+@interface RequestedItemsCollectionViewController()
+
+@property (nonatomic) BOOL isRequestingPortion;
+@property (nonatomic,strong) UIRefreshControl *refreshControl;
+
+@end
+
 @implementation RequestedItemsCollectionViewController
 {
     NSMutableArray *_items;
-    BOOL isRequestingPortion;
     
     UIRefreshControl *_refreshControl;
 }
 
 -(void)initRefreshControl
 {
-    _refreshControl = [[UIRefreshControl alloc] init];
-    [_refreshControl addTarget:self
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self
                             action:@selector(reloadData)
                   forControlEvents:UIControlEventValueChanged];
-    _refreshControl.tintColor = [UIColor grayColor];
-    [self.collectionView addSubview:_refreshControl];
+    self.refreshControl.tintColor = [UIColor grayColor];
+    [self.collectionView addSubview:self.refreshControl];
     self.collectionView.alwaysBounceVertical = YES;
 }
 
@@ -43,16 +49,23 @@
 
 #pragma mark - 
 
+-(void)addNewItems:(NSArray*)items
+{
+    [_items addObjectsFromArray:items];
+}
+
 -(void)reloadData
 {
     [self.itemsRequest cancel];
     
     _items = [NSMutableArray array];
     
+    __weak typeof(self) pself = self;
+    
     [self.itemsRequest prepare:^(NSArray *newItems, NSError *error) {
         if (!error)
         {
-            [_items addObjectsFromArray:newItems];
+            [pself addNewItems:newItems];
         }
         else
         {
@@ -60,11 +73,11 @@
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            isRequestingPortion = NO;
-            if (_refreshControl.isRefreshing)
-                [_refreshControl endRefreshing];
+            pself.isRequestingPortion = NO;
+            if (pself.refreshControl.isRefreshing)
+                [pself.refreshControl endRefreshing];
             
-                [self.collectionView reloadData];
+                [pself.collectionView reloadData];
         });
     }];
     
@@ -76,9 +89,9 @@
 
 -(void)requestNewPortionIfNeeded
 {
-    if (!isRequestingPortion)
+    if (!self.isRequestingPortion)
     {
-        isRequestingPortion = YES;
+        self.isRequestingPortion = YES;
         [self.itemsRequest nextPortion];
     }
 }
