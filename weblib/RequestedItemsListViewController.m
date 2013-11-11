@@ -166,7 +166,7 @@
         });
     }];
     
-    if (self.refreshControl.refreshing)
+    if ([self refreshControlisRefreshing])
         [self.itemsRequest nextPortion];
     
     [self.tableView reloadData];
