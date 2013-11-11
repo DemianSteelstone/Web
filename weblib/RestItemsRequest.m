@@ -67,10 +67,12 @@
 {
     request.params = [self paramsForCurrentPortion];
     
+    __weak typeof(self) pself = self;
+    
     [request send:^(RestResponse *response) {
         if (response.error)
         {
-            [self errorInRequest:response.error];
+            [pself errorInRequest:response.error];
             return;
         }
         
@@ -79,7 +81,7 @@
         id parsedObject = [response parsedBody:&error];
         if (error)
         {
-            [self errorInRequest:error];
+            [pself errorInRequest:error];
             return;
         }
         
@@ -89,19 +91,19 @@
             
             if (newItems.count)
             {
-                currentOffset+=self.itemsInRequest;
+                currentOffset+=pself.itemsInRequest;
             }
             
-            if (!newItems.count || self.itemsInRequest<=0)
+            if (!newItems.count || pself.itemsInRequest<=0)
             {
-                [self stopRequesting];
+                [pself stopRequesting];
             }
             
             portionLoadedBlock(newItems,nil);
         }
-        else if (self.unexpectedContentErrorBuilder)
+        else if (pself.unexpectedContentErrorBuilder)
         {
-            [self errorInRequest:self.unexpectedContentErrorBuilder(parsedObject)];
+            [pself errorInRequest:pself.unexpectedContentErrorBuilder(parsedObject)];
             return;
         }
     }];

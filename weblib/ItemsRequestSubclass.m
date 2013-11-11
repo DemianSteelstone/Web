@@ -39,7 +39,7 @@
     
     currentOffset = 0;
     
-    portionLoadedBlock = [portionLoaded copy];
+    portionLoadedBlock = portionLoaded;
 }
 
 @end

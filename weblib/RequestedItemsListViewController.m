@@ -14,6 +14,10 @@
 
 #import "ODRefreshControl.h"
 
+@interface RequestedItemsListViewController()
+@property (nonatomic) BOOL isRequestingPortion;
+@end
+
 @implementation RequestedItemsListViewController
 {
     NSMutableArray *_items;
@@ -22,6 +26,8 @@
     
     ODRefreshControl *odoRefresh;
 }
+
+@synthesize isRequestingPortion = isRequestingPortion;
 
 -(void)setup
 {
@@ -125,16 +131,23 @@
     [self initRefreshControl];
 }
 
+-(void)addLoadedItems:(NSArray*)newItems
+{
+    [_items addObjectsFromArray:newItems];
+}
+
 -(void)reloadData
 {
     [self.itemsRequest cancel];
     
     _items = [NSMutableArray array];
     
+    __weak typeof(self) pself = self;
+    
     [self.itemsRequest prepare:^(NSArray *newItems, NSError *error) {
         if (!error)
         {
-            [_items addObjectsFromArray:newItems];
+            [pself addLoadedItems:newItems];
         }
         else
         {
@@ -142,14 +155,14 @@
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            isRequestingPortion = NO;
-            if ([self refreshControlisRefreshing])
-                [self refreshControlEnd];
+            pself.isRequestingPortion = NO;
+            if ([pself refreshControlisRefreshing])
+                [pself refreshControlEnd];
             
-            if (self.searchDisplayController && self.searchDisplayController.isActive)
-                [self.searchDisplayController.searchResultsTableView reloadData];
+            if (pself.searchDisplayController && pself.searchDisplayController.isActive)
+                [pself.searchDisplayController.searchResultsTableView reloadData];
             else
-                [self.tableView reloadData];
+                [pself.tableView reloadData];
         });
     }];
     
