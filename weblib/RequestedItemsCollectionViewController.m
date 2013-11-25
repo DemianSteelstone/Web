@@ -98,6 +98,31 @@
 
 #pragma mark - Overload
 
+-(int)contentSection
+{
+    return 0;
+}
+
+-(int)numberOfSections
+{
+    return 1;
+}
+
+-(int)numberOfCellsInNonContentSection:(int)section
+{
+    return 0;
+}
+
+-(UICollectionViewCell*)nonContentCell:(UICollectionView*)collectionView forIndexPath:(NSIndexPath*)indexPath
+{
+    return nil;
+}
+
+-(CGSize)nonContentCellSize:(UICollectionView*)collectionView forIndexPath:(NSIndexPath*)indexPath
+{
+    return CGSizeMake(128,128);
+}
+
 -(CGSize)cellSizeForItem:(NSDictionary*)item
 {
     return CGSizeMake(128,128);
@@ -128,49 +153,59 @@
     return nil;
 }
 
--(void)itemSelected:(NSDictionary*)item
-{
-    
-}
-
 #pragma mark - Collection delegate
 
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-    return 1;
+    return [self numberOfSections];
 }
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    int count = _items.count;
+    if (section == [self contentSection])
+    {
+        int count = _items.count;
+        
+        if ((count == 0 || self.itemsRequest.isRequesting) && !_refreshControl.isRefreshing)
+            count++;
+        
+        return count;
+    }
     
-    if ((count == 0 || self.itemsRequest.isRequesting) && !_refreshControl.isRefreshing)
-        count++;
-    
-    return count;
+    return [self numberOfCellsInNonContentSection:section];
 }
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row < _items.count)
-        return [self contentCell:[_items objectAtIndex:indexPath.row] collectionView:collectionView forIndexPath:(NSIndexPath*)indexPath];
-    
-    if (self.itemsRequest.isRequesting)
+    if (indexPath.section == [self contentSection])
     {
-        [self requestNewPortionIfNeeded];
-        return [self loadingCell:collectionView forIndexPath:indexPath];
+        if (indexPath.row < _items.count)
+            return [self contentCell:[_items objectAtIndex:indexPath.row] collectionView:collectionView forIndexPath:(NSIndexPath*)indexPath];
+        
+        if (self.itemsRequest.isRequesting)
+        {
+            [self requestNewPortionIfNeeded];
+            return [self loadingCell:collectionView forIndexPath:indexPath];
+        }
+        
+        return [self noItemsCell:collectionView forIndexPath:indexPath];
     }
     
-    return [self noItemsCell:collectionView forIndexPath:indexPath];
+    return [self nonContentCell:collectionView forIndexPath:indexPath];
 }
 
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row < _items.count)
-        return [self cellSizeForItem:_items[indexPath.row]];
-    
-    if (self.itemsRequest.isRequesting)
+    if (indexPath.section == [self contentSection])
     {
-        return [self loadingCellSize];
+        if (indexPath.row < _items.count)
+            return [self cellSizeForItem:_items[indexPath.row]];
+        
+        if (self.itemsRequest.isRequesting)
+        {
+            return [self loadingCellSize];
+        }
+        
+        return [self noitemsCellSize];
     }
     
-    return [self noitemsCellSize];
+    return [self nonContentCellSize:collectionView forIndexPath:indexPath];
 }
 
 @end

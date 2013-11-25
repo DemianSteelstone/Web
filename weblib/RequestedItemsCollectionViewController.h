@@ -19,12 +19,17 @@
 
 // Overload
 
+-(int)contentSection;
+-(int)numberOfSections;
+-(int)numberOfCellsInNonContentSection:(int)section;
+-(UICollectionViewCell*)nonContentCell:(UICollectionView*)collectionView forIndexPath:(NSIndexPath*)indexPath;
+-(CGSize)nonContentCellSize:(UICollectionView*)collectionView forIndexPath:(NSIndexPath*)indexPath;
+
 -(CGSize)cellSizeForItem:(NSDictionary*)item;
 -(CGSize)loadingCellSize;
 -(CGSize)noitemsCellSize;
 -(UICollectionViewCell*)loadingCell:(UICollectionView*)collectionView forIndexPath:(NSIndexPath*)indexPath;
 -(UICollectionViewCell*)noItemsCell:(UICollectionView*)collectionView forIndexPath:(NSIndexPath*)indexPath;
 -(UICollectionViewCell*)contentCell:(NSDictionary*)item collectionView:(UICollectionView*)collectionView forIndexPath:(NSIndexPath*)indexPath;
--(void)itemSelected:(NSDictionary*)item;
 
 @end
