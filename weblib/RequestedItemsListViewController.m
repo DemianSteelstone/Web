@@ -172,6 +172,21 @@
     [self.tableView reloadData];
 }
 
+-(void)updateItem:(NSDictionary*)item withComparator:(BOOL (^)(NSDictionary* candidate, NSDictionary *newItem))comparator
+{
+    if (!comparator) return;
+    
+    for (int i=0; i<_items.count; i++)
+    {
+        if (comparator(_items[i],item))
+        {
+            [_items replaceObjectAtIndex:i withObject:item];
+            [self.tableView reloadData];
+            return;
+        }
+    }
+}
+
 -(void)requestNewPortionIfNeeded
 {
     if (!isRequestingPortion)

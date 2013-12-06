@@ -49,6 +49,21 @@
 
 #pragma mark - 
 
+-(void)updateItem:(NSDictionary*)item withComparator:(BOOL (^)(NSDictionary* candidate, NSDictionary *newItem))comparator
+{
+    if (!comparator) return;
+    
+    for (int i=0; i<_items.count; i++)
+    {
+        if (comparator(_items[i],item))
+        {
+            [_items replaceObjectAtIndex:i withObject:item];
+            [self.collectionView reloadData];
+            return;
+        }
+    }
+}
+
 -(void)addNewItems:(NSArray*)items
 {
     [_items addObjectsFromArray:items];

@@ -16,6 +16,7 @@
 @property (nonatomic, strong, readonly) NSArray *items;
 
 -(void)reloadData;
+-(void)updateItem:(NSDictionary*)item withComparator:(BOOL (^)(NSDictionary* candidate, NSDictionary *newItem))comparator;
 
 // Overload
 

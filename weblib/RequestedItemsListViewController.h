@@ -19,6 +19,7 @@
 @property (nonatomic) BOOL refreshControlEnabled;
 
 -(void)reloadData;
+-(void)updateItem:(NSDictionary*)item withComparator:(BOOL (^)(NSDictionary* candidate, NSDictionary *newItem))comparator;
 
 -(UITableViewCell*)loadingCell:(UITableView*)tableView;
 -(UITableViewCell*)noItemsCell:(UITableView*)tableView;
