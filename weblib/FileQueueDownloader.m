@@ -11,6 +11,8 @@
 @implementation FileQueueDownloader
 {
     NSOperationQueue *operations;
+    
+    NSMutableDictionary *addedLinks;
 }
 
 -(id)init
@@ -19,6 +21,8 @@
     {
         self.maxDownloadingFiles = 4;
         self.downloadToFile = NO;
+        
+        addedLinks = [NSMutableDictionary dictionary];
         
         operations = [[NSOperationQueue alloc] init];
         operations.maxConcurrentOperationCount = self.maxDownloadingFiles;
@@ -39,12 +43,17 @@
 
 -(void)addLink:(NSString *)link userData:(id)userData
 {
-    if (!link.length) return;
+    if (!link.length)
+        return;
+    
+    if ([addedLinks valueForKey:link])
+        return;
     
     NSDictionary *item =[NSDictionary dictionaryWithObjectsAndKeys:
                          link,@"link",
                          userData,@"userData",
                          nil];
+    addedLinks[link] = item;
     
     __weak id pself = self;
     
@@ -59,10 +68,17 @@
     }];
 }
 
+-(void)removeItem:(HTTPrequest*)request
+{
+    [addedLinks removeObjectForKey:[request.userData valueForKey:@"link"]];
+}
+
 #pragma mark - HTTPRequest Delegate
 
 -(void)httpRequest:(HTTPrequest *)request dataLoaded:(NSMutableData *)data
 {
+    [self removeItem:request];
+    
     if (self.delegate)
         [self.delegate queueDownloader:self
                         fileDownloaded:[request.userData valueForKey:@"link"]
@@ -72,6 +88,8 @@
 
 -(void)httpRequest:(HTTPrequest *)request dataFileLoaded:(NSString *)path
 {
+    [self removeItem:request];
+    
     if (self.delegate)
         [self.delegate queueDownloader:self
                         fileDownloaded:[request.userData valueForKey:@"link"]
@@ -81,6 +99,8 @@
 
 -(void)httpRequest:(HTTPrequest *)request error:(NSError *)errorCode
 {
+    [self removeItem:request];
+    
     if ([errorCode.domain isEqualToString:NSURLErrorDomain] && errorCode.code == NSURLErrorTimedOut)
     {
         [self addLink:[request.userData valueForKey:@"link"] userData:[request.userData valueForKey:@"userData"]];
