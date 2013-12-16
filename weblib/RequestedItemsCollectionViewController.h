@@ -15,6 +15,8 @@
 @property (nonatomic,strong) ItemsRequest *itemsRequest;
 @property (nonatomic, strong, readonly) NSArray *items;
 
+@property (nonatomic) BOOL refreshControlEnabled;
+
 -(void)reloadData;
 -(void)updateItem:(NSDictionary*)item withComparator:(BOOL (^)(NSDictionary* candidate, NSDictionary *newItem))comparator;
 

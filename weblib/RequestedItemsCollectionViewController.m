@@ -23,8 +23,21 @@
     UIRefreshControl *_refreshControl;
 }
 
+-(void)setRefreshControlEnabled:(BOOL)refreshControlEnabled
+{
+    _refreshControlEnabled = refreshControlEnabled;
+    
+    if (_refreshControlEnabled)
+        [self initRefreshControl];
+    else
+        self.refreshControl = nil;
+}
+
 -(void)initRefreshControl
 {
+    if (!self.refreshControlEnabled)
+        return;
+    
     self.refreshControl = [[UIRefreshControl alloc] init];
     [self.refreshControl addTarget:self
                             action:@selector(reloadData)
