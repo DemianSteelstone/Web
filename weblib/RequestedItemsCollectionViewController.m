@@ -77,9 +77,9 @@
     }
 }
 
--(void)addNewItems:(NSArray*)items
+-(void)addItems:(NSArray*)newItems
 {
-    [_items addObjectsFromArray:items];
+    [_items addObjectsFromArray:newItems];
 }
 
 -(void)reloadData
@@ -93,7 +93,7 @@
     [self.itemsRequest prepare:^(NSArray *newItems, NSError *error) {
         if (!error)
         {
-            [pself addNewItems:newItems];
+            [pself addItems:newItems];
         }
         else
         {

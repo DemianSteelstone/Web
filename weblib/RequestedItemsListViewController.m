@@ -131,7 +131,7 @@
     [self initRefreshControl];
 }
 
--(void)addLoadedItems:(NSArray*)newItems
+-(void)addItems:(NSArray*)newItems
 {
     [_items addObjectsFromArray:newItems];
 }
@@ -147,7 +147,7 @@
     [self.itemsRequest prepare:^(NSArray *newItems, NSError *error) {
         if (!error)
         {
-            [pself addLoadedItems:newItems];
+            [pself addItems:newItems];
         }
         else
         {

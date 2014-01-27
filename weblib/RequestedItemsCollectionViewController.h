@@ -17,6 +17,8 @@
 
 @property (nonatomic) BOOL refreshControlEnabled;
 
+-(void)addItems:(NSArray*)newItems;
+
 -(void)reloadData;
 -(void)updateItem:(NSDictionary*)item withComparator:(BOOL (^)(NSDictionary* candidate, NSDictionary *newItem))comparator;
 
