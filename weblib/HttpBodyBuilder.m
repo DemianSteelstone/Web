@@ -28,17 +28,17 @@
     if (self = [super init])
     {
         _streamToFile = streamToFile;
-         if (_streamToFile)
-         {
-         FileSystem *fs = [FileSystem sharedFileSystem];
-         outputStreamFileName = [fs cachesPathForFile:[FileSystem randomFileName:@"tmp"]];
-         outputStream = [[NSOutputStream alloc] initToFileAtPath:outputStreamFileName append:NO];
-         }
-         else
-         {
-         outputStream = [NSOutputStream outputStreamToMemory];
-         }
-         [outputStream open];
+        if (_streamToFile)
+        {
+            FileSystem *fs = [FileSystem sharedFileSystem];
+            outputStreamFileName = [fs cachesPathForFile:[FileSystem randomFileName:@"tmp"]];
+            outputStream = [[NSOutputStream alloc] initToFileAtPath:outputStreamFileName append:NO];
+        }
+        else
+        {
+            outputStream = [NSOutputStream outputStreamToMemory];
+        }
+        [outputStream open];
         totalBytes = 0;
         
         NSData *begin = [self beginContent];
@@ -48,7 +48,7 @@
     return self;
 }
 
--(void)appendBytes:(const void*)bytes length:(int)length
+-(void)appendBytes:(const void*)bytes length:(NSUInteger)length
 {
     [outputStream write:bytes maxLength:length];
     totalBytes+=length;
@@ -67,7 +67,7 @@
     [input open];
     while ([input hasBytesAvailable])
     {
-        int bytesRead = [input read:buffer maxLength:READ_CHUNK];
+        NSInteger bytesRead = [input read:buffer maxLength:READ_CHUNK];
         if (!bytesRead) break;
         
         [self appendBytes:buffer length:bytesRead];

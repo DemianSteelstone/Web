@@ -195,7 +195,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
 	if ([response respondsToSelector:@selector(statusCode)])
 	{
-		int statusCode = [((NSHTTPURLResponse *)response) statusCode];
+		NSInteger statusCode = [((NSHTTPURLResponse *)response) statusCode];
 		if (statusCode >= 400)
 		{
 			[connection cancel]; 

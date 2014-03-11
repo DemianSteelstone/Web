@@ -26,7 +26,7 @@
 
 -(int)contentSection;
 -(int)numberOfSections;
--(int)numberOfCellsInNonContentSection:(int)section;
+-(int)numberOfCellsInNonContentSection:(NSInteger)section;
 -(UICollectionViewCell*)nonContentCell:(UICollectionView*)collectionView forIndexPath:(NSIndexPath*)indexPath;
 -(CGSize)nonContentCellSize:(UICollectionView*)collectionView forIndexPath:(NSIndexPath*)indexPath;
 

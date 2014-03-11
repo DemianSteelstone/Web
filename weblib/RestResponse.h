@@ -18,7 +18,7 @@
                             forRequest:(RestRequest*)request;
 
 
--(int)statusCode;
+-(NSInteger)statusCode;
 -(NSError*)error;
 -(NSData*)body;
 -(id)parsedBody:(NSError**)error;

@@ -212,7 +212,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    int count = _items.count;
+    NSUInteger count = _items.count;
     
     if ((count == 0 || self.itemsRequest.isRequesting) && ![self refreshControlisRefreshing])
         count++;
@@ -234,7 +234,7 @@
     return [self noItemsCell:tableView];
 }
 
--(float)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row < _items.count)
         return [self cellHeightForItem:[_items objectAtIndex:indexPath.row] cellWidth:[UITableViewCell groupedCellWidth:self.interfaceOrientation]];

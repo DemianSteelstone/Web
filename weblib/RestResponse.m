@@ -45,7 +45,7 @@
 }
 
 
--(int)statusCode
+-(NSInteger)statusCode
 {
     return httpResponse.statusCode;
 }

@@ -136,7 +136,7 @@
     return 1;
 }
 
--(int)numberOfCellsInNonContentSection:(int)section
+-(int)numberOfCellsInNonContentSection:(NSInteger)section
 {
     return 0;
 }
@@ -190,7 +190,7 @@
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     if (section == [self contentSection])
     {
-        int count = _items.count;
+        NSUInteger count = _items.count;
         
         if ((count == 0 || self.itemsRequest.isRequesting) && !_refreshControl.isRefreshing)
             count++;
