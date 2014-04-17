@@ -10,29 +10,48 @@
 
 #import "UITableViewCell+Helpers.h"
 
-#import "ErrorAlertView.h"
+#import "RequestItemsDataSource.h"
 
 #import "ODRefreshControl.h"
 
-@interface RequestedItemsListViewController()
-@property (nonatomic) BOOL isRequestingPortion;
-@end
-
 @implementation RequestedItemsListViewController
 {
-    NSMutableArray *_items;
-    
-    BOOL isRequestingPortion;
-    
     ODRefreshControl *odoRefresh;
+    
+    RequestItemsDataSource *dataSource;
 }
-
-@synthesize isRequestingPortion = isRequestingPortion;
 
 -(void)setup
 {
     _autoDeselectRows = YES;
     _refreshControlEnabled = YES;
+    
+    [self initDataSource];
+}
+
+-(void)initDataSource
+{
+    dataSource = [RequestItemsDataSource new];
+    
+    __weak typeof(self) pself = self;
+    [dataSource setReloadContainerBlock:^{
+        [pself.tableView reloadData];
+    }];
+    [dataSource setIsRefreshControllRefreshingBlock:^BOOL{
+        return [pself refreshControlisRefreshing];
+    }];
+    [dataSource setRefreshControllEndBlock:^{
+        [pself refreshControlEnd];
+    }];
+    [dataSource setContentCellGeneratorBlock:^id(NSDictionary *item, NSInteger index, id container) {
+        return [pself contentCell:item tableView:container forIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+    }];
+    [dataSource setLoadingCellGeneratorBlock:^id(NSInteger index, id container) {
+        return [pself loadingCell:container];
+    }];
+    [dataSource setNoItmesCellGeneratorBlock:^id(NSInteger index, id container) {
+        return [pself noItemsCell:container];
+    }];
 }
 
 -(id)init
@@ -131,76 +150,38 @@
     [self initRefreshControl];
 }
 
--(void)addItems:(NSArray*)newItems
+#pragma mark - Properties
+
+-(void)setItemsRequest:(ItemsRequest *)itemsRequest
 {
-    [_items addObjectsFromArray:newItems];
+    dataSource.itemsRequest = itemsRequest;
+}
+
+-(ItemsRequest*)itemsRequest
+{
+    return dataSource.itemsRequest;
+}
+
+-(NSArray*)items
+{
+    return dataSource.items;
+}
+
+#pragma mark -
+
+-(void)addItems:(NSArray *)newItems
+{
+    [dataSource addItems:newItems];
+}
+
+-(void)updateItem:(NSDictionary *)item withComparator:(BOOL (^)(NSDictionary *, NSDictionary *))comparator
+{
+    [dataSource updateItem:item withComparator:comparator];
 }
 
 -(void)reloadData
 {
-    [self.itemsRequest cancel];
-    
-    _items = [NSMutableArray array];
-    
-    __weak typeof(self) pself = self;
-    
-    [self.itemsRequest prepare:^(NSArray *newItems, NSError *error) {
-        if (!error)
-        {
-            [pself addItems:newItems];
-        }
-        else
-        {
-            [ErrorAlertView showError:error realError:YES];
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            pself.isRequestingPortion = NO;
-            if ([pself refreshControlisRefreshing])
-                [pself refreshControlEnd];
-            
-            if (pself.searchDisplayController && pself.searchDisplayController.isActive)
-                [pself.searchDisplayController.searchResultsTableView reloadData];
-            else
-                [pself.tableView reloadData];
-        });
-    }];
-    
-    if ([self refreshControlisRefreshing])
-        [self.itemsRequest nextPortion];
-    
-    [self.tableView reloadData];
-}
-
--(void)updateItem:(NSDictionary*)item withComparator:(BOOL (^)(NSDictionary* candidate, NSDictionary *newItem))comparator
-{
-    if (!comparator) return;
-    
-    for (int i=0; i<_items.count; i++)
-    {
-        if (comparator(_items[i],item))
-        {
-            [_items replaceObjectAtIndex:i withObject:item];
-            [self.tableView reloadData];
-            return;
-        }
-    }
-}
-
--(void)requestNewPortionIfNeeded
-{
-    if (!isRequestingPortion)
-    {
-        isRequestingPortion = YES;
-        [self.itemsRequest nextPortion];
-    }
-}
-
--(void)setItemsRequest:(ItemsRequest *)itemsRequest
-{
-    [self.itemsRequest cancel];
-    isRequestingPortion = NO;
-    _itemsRequest = itemsRequest;
+    [dataSource reloadData];
 }
 
 #pragma mark - Table view data source
@@ -212,32 +193,18 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSUInteger count = _items.count;
-    
-    if ((count == 0 || self.itemsRequest.isRequesting) && ![self refreshControlisRefreshing])
-        count++;
-    
-    return count;
+    return [dataSource numberOfCells];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row < _items.count)
-        return [self contentCell:[_items objectAtIndex:indexPath.row] tableView:tableView forIndexPath:(NSIndexPath*)indexPath];
-    
-    if (self.itemsRequest.isRequesting)
-    {
-        [self requestNewPortionIfNeeded];
-        return [self loadingCell:tableView];
-    }
-    
-    return [self noItemsCell:tableView];
+    return [dataSource generateCellForIndex:indexPath.row inContainer:tableView];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row < _items.count)
-        return [self cellHeightForItem:[_items objectAtIndex:indexPath.row] cellWidth:[UITableViewCell groupedCellWidth:self.interfaceOrientation]];
+    if (indexPath.row < self.items.count)
+        return [self cellHeightForItem:[self.items objectAtIndex:indexPath.row] cellWidth:[UITableViewCell groupedCellWidth:self.interfaceOrientation]];
     return tableView.rowHeight;
 }
 
@@ -248,8 +215,8 @@
     if (self.autoDeselectRows)
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if (indexPath.row < _items.count)
-        [self itemSelected:[_items objectAtIndex:indexPath.row]];
+    if (indexPath.row < self.items.count)
+        [self itemSelected:[self.items objectAtIndex:indexPath.row]];
 }
 
 #pragma mark - Overload
