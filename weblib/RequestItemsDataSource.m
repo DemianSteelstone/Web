@@ -119,6 +119,22 @@
     }
 }
 
+-(void)updateItemFrom:(BOOL (^)(NSDictionary *candidate))comparator modificationBlock:(NSDictionary* (^)(NSDictionary* oldItem))modificationBlock
+{
+    if (!comparator || !modificationBlock) return;
+    
+    for (int i=0; i<_items.count; i++)
+    {
+        if (comparator(_items[i]))
+        {
+            NSDictionary *newItem = modificationBlock(_items[i]);
+            [_items replaceObjectAtIndex:i withObject:newItem];
+            [self reloadContainer];
+            return;
+        }
+    }
+}
+
 #pragma mark - Cells generation
 
 -(id)contentCellForIndex:(NSInteger)index forContainer:(id)container

@@ -25,6 +25,8 @@
 -(void)reloadData;
 -(void)updateItem:(NSDictionary*)item withComparator:(BOOL (^)(NSDictionary* candidate, NSDictionary *newItem))comparator;
 
+-(void)updateItemFrom:(BOOL (^)(NSDictionary *candidate))comparator modificationBlock:(NSDictionary* (^)(NSDictionary* oldItem))modificationBlock;
+
 @property (nonatomic,readonly) NSInteger numberOfCells;
 -(id)generateCellForIndex:(NSInteger)index inContainer:(id)container;
 
