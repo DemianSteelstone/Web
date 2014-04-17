@@ -21,7 +21,7 @@
     RequestItemsDataSource *dataSource;
 }
 
--(void)setup
+-(void)setupRequestedItemsListVIewController
 {
     _autoDeselectRows = YES;
     _refreshControlEnabled = YES;
@@ -44,7 +44,7 @@
         [pself refreshControlEnd];
     }];
     [dataSource setContentCellGeneratorBlock:^id(NSDictionary *item, NSInteger index, id container) {
-        return [pself contentCell:item tableView:container forIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+        return [pself contentCell:item tableView:container forIndexPath:[NSIndexPath indexPathForRow:index inSection:[pself contentSection]]];
     }];
     [dataSource setLoadingCellGeneratorBlock:^id(NSInteger index, id container) {
         return [pself loadingCell:container];
@@ -58,7 +58,7 @@
 {
     if (self = [super init])
     {
-        [self setup];
+        [self setupRequestedItemsListVIewController];
     }
     return self;
 }
@@ -67,7 +67,16 @@
 {
     if (self = [super initWithCoder:aDecoder])
     {
-        [self setup];
+        [self setupRequestedItemsListVIewController];
+    }
+    return self;
+}
+
+-(id)initWithStyle:(UITableViewStyle)style
+{
+    if (self = [super initWithStyle:style])
+    {
+        [self setupRequestedItemsListVIewController];
     }
     return self;
 }
@@ -221,9 +230,14 @@
 
 #pragma mark - Overload
 
--(float)cellHeightForItem:(NSDictionary*)item cellWidth:(float)width
+-(CGFloat)cellHeightForItem:(NSDictionary*)item cellWidth:(float)width
 {
     return self.tableView.rowHeight;
+}
+
+-(NSInteger)contentSection
+{
+    return 0;
 }
 
 -(UITableViewCell*)loadingCell:(UITableView*)tableView

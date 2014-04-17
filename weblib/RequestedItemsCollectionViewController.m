@@ -67,6 +67,15 @@
     return self;
 }
 
+-(id)initWithCollectionViewLayout:(UICollectionViewLayout *)layout
+{
+    if (self = [super initWithCollectionViewLayout:layout])
+    {
+        [self initDataSource];
+    }
+    return self;
+}
+
 #pragma mark - Properties
 
 -(NSArray*)items

@@ -30,6 +30,7 @@
     [self.itemsRequest cancel];
     self.isRequestingPortion = NO;
     _itemsRequest = itemsRequest;
+    [self reloadContainer];
 }
 
 #pragma mark - 
@@ -84,14 +85,14 @@
             if ([pself isRefreshControllRefreshing])
                 [pself refreshControllEnd];
             
-            [pself reloadContainerBlock];
+            [pself reloadContainer];
         });
     }];
     
     if ([self isRefreshControllRefreshing])
         [self.itemsRequest nextPortion];
     
-    [self reloadContainerBlock];
+    [self reloadContainer];
 }
 
 -(void)requestNewPortionIfNeeded
