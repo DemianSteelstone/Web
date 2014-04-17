@@ -9,11 +9,9 @@
 #import "ItemsRequest.h"
 
 @interface ItemsRequestSubclass : ItemsRequest
-{
-    int currentOffset;
-    
-    void (^portionLoadedBlock)(NSArray*,NSError*);
-}
+
+@property (nonatomic) int currentOffset;
+@property (nonatomic,copy) void (^portionLoadedBlock)(NSArray*,NSError*);
 
 -(void)beginRequesting;
 -(void)stopRequesting;

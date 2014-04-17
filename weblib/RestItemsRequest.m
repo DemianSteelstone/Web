@@ -26,7 +26,7 @@
     _isRequesting = NO;
     _isFinished = NO;
     
-    currentOffset = 0;
+    self.currentOffset = 0;
     
     _items = [NSMutableArray arrayWithCapacity:self.itemsInRequest];
     
@@ -53,7 +53,7 @@
     if (self.itemsInRequest>0)
     {
         if (self.offsetParamsName.length)
-            [params setValue:[NSString stringWithFormat:@"%d",currentOffset]
+            [params setValue:[NSString stringWithFormat:@"%d",self.currentOffset]
                       forKey:self.offsetParamsName];
         if (self.countParamName.length)
             [params setValue:[NSString stringWithFormat:@"%d",self.itemsInRequest]
@@ -91,7 +91,7 @@
             
             if (newItems.count)
             {
-                currentOffset+=pself.itemsInRequest;
+                pself.currentOffset+=pself.itemsInRequest;
             }
             
             if (!newItems.count || pself.itemsInRequest<=0)
@@ -99,7 +99,7 @@
                 [pself stopRequesting];
             }
             
-            portionLoadedBlock(newItems,nil);
+            pself.portionLoadedBlock(newItems,nil);
         }
         else if (pself.unexpectedContentErrorBuilder)
         {

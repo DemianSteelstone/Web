@@ -20,7 +20,7 @@
 @property (nonatomic,readonly) BOOL isRequesting;
 @property (nonatomic,readonly) BOOL isFinished;
 
--(void)prepare:(void (^) (NSArray*,NSError*))itemsLoaded;
+-(void)prepare:(void (^) (NSArray*,NSError*))portionLoaded;
 -(void)cancel;
 -(void)nextPortion;
 

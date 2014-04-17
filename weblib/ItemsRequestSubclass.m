@@ -30,16 +30,17 @@
 -(void)errorInRequest:(NSError*)error
 {
     [self stopRequesting];
-    portionLoadedBlock(nil,error);
+    if (self.portionLoadedBlock)
+        self.portionLoadedBlock(nil,error);
 }
 
 -(void)prepare:(void (^) (NSArray*,NSError*))portionLoaded
 {
     [self beginRequesting];
     
-    currentOffset = 0;
+    self.currentOffset = 0;
     
-    portionLoadedBlock = portionLoaded;
+    self.portionLoadedBlock = [portionLoaded copy];
 }
 
 @end
