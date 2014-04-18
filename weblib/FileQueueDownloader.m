@@ -11,15 +11,13 @@
 @implementation FileQueueDownloader
 {
     NSOperationQueue *operations;
-    
-    NSMutableDictionary *addedLinks;
 }
 
 -(id)init
 {
     if (self = [super init])
     {
-        self.maxDownloadingFiles = 4;
+        self.maxDownloadingFiles = 1;
         self.downloadToFile = NO;
         
         operations = [[NSOperationQueue alloc] init];
@@ -36,7 +34,8 @@
 
 -(void)clearQueue
 {
-    [operations cancelAllOperations];
+    if (operations.operationCount>1)
+        [operations cancelAllOperations];
 }
 
 -(void)addLink:(NSString *)link userData:(id)userData
@@ -48,13 +47,13 @@
                          link,@"link",
                          userData,@"userData",
                          nil];
-    __weak id pself = self;
+    __weak typeof(self) pself = self;
     
     [operations addOperationWithBlock:^{
         HTTPrequest *request = [[HTTPrequest alloc] init];
         request.delegate = pself;
         request.userData = item;
-        request.downloadToFile = self.downloadToFile;
+        request.downloadToFile = pself.downloadToFile;
         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
             [request sendRequest:[item valueForKey:@"link"]];
         }];
