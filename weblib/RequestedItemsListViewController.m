@@ -35,7 +35,10 @@
     
     __weak typeof(self) pself = self;
     [dataSource setReloadContainerBlock:^{
-        [pself.tableView reloadData];
+        if (pself.searchDisplayController.isActive)
+            [pself.searchDisplayController.searchResultsTableView reloadData];
+        else
+            [pself.tableView reloadData];
     }];
     [dataSource setIsRefreshControllRefreshingBlock:^BOOL{
         return [pself refreshControlisRefreshing];
