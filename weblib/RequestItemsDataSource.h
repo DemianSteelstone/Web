@@ -20,6 +20,8 @@
 @property (nonatomic,copy) BOOL (^isRefreshControllRefreshingBlock)();
 @property (nonatomic,copy) void (^refreshControllEndBlock)();
 
+@property (nonatomic,copy) NSArray* (^preprocessItemsBlock)(NSArray *items);
+
 -(void)addItems:(NSArray*)newItems;
 
 -(void)reloadData;

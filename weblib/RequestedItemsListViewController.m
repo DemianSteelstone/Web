@@ -55,6 +55,9 @@
     [dataSource setNoItmesCellGeneratorBlock:^id(NSInteger index, id container) {
         return [pself noItemsCell:container];
     }];
+    [dataSource setPreprocessItemsBlock:^NSArray *(NSArray *items) {
+        return [pself preprocessItems:items];
+    }];
 }
 
 -(id)init
@@ -181,9 +184,9 @@
 
 #pragma mark -
 
--(void)addItems:(NSArray *)newItems
+-(NSArray*)preprocessItems:(NSArray *)newItems
 {
-    [dataSource addItems:newItems];
+    return newItems;
 }
 
 -(void)updateItem:(NSDictionary *)item withComparator:(BOOL (^)(NSDictionary *, NSDictionary *))comparator

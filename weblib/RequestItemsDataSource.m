@@ -58,7 +58,12 @@
 
 -(void)addItems:(NSArray*)newItems
 {
-    [_items addObjectsFromArray:newItems];
+    NSArray *processedItems = newItems;
+    
+    if (self.preprocessItemsBlock)
+        processedItems = self.preprocessItemsBlock(newItems);
+        
+    [_items addObjectsFromArray:processedItems];
     [self reloadContainer];
 }
 
