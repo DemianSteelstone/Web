@@ -21,7 +21,7 @@
 @interface FileQueueDownloader : NSObject <HTTPrequestDelegate>
 
 @property (nonatomic, weak) id<FileQueueDownloaderDelegate> delegate;
-@property (nonatomic) int maxDownloadingFiles;
+@property (nonatomic) NSInteger maxDownloadingFiles;
 @property (nonatomic) BOOL downloadToFile;
 
 -(void)addLink:(NSString*)link userData:(id)userData;

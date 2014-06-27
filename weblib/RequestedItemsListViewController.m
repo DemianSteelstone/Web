@@ -236,7 +236,7 @@
 
 #pragma mark - Overload
 
--(CGFloat)cellHeightForItem:(NSDictionary*)item cellWidth:(float)width
+-(CGFloat)cellHeightForItem:(NSDictionary*)item cellWidth:(CGFloat)width
 {
     return self.tableView.rowHeight;
 }

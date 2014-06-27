@@ -26,7 +26,7 @@
     return self;
 }
 
--(void)setMaxDownloadingFiles:(int)maxDownloadingFiles
+-(void)setMaxDownloadingFiles:(NSInteger)maxDownloadingFiles
 {
     _maxDownloadingFiles = maxDownloadingFiles;
     operations.maxConcurrentOperationCount = self.maxDownloadingFiles;

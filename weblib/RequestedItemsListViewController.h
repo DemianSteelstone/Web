@@ -28,7 +28,7 @@
 
 -(UITableViewCell*)contentCell:(NSDictionary*)item tableView:(UITableView*)tableView forIndexPath:(NSIndexPath*)indexPath;
 
--(CGFloat)cellHeightForItem:(NSDictionary*)item cellWidth:(float)width;
+-(CGFloat)cellHeightForItem:(NSDictionary*)item cellWidth:(CGFloat)width;
 
 -(void)itemSelected:(NSDictionary*)item;
 
