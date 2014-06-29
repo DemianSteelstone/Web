@@ -151,7 +151,7 @@
 								 stringWithFormat:@"multipart/form-data; boundary=%@", kStringBoundary];
 		[request setValue:contentType forHTTPHeaderField:@"Content-Type"];
         
-        NSString *length = [NSString stringWithFormat:@"%d",[_body length]];
+        NSString *length = [NSString stringWithFormat:@"%lld",[_body length]];
         [request setValue:length forHTTPHeaderField:@"Content-Length"];
 #ifdef WEBLIB_DEBUG
         NSLog(@"Request body length: %@",length);

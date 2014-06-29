@@ -151,17 +151,17 @@
 
 #pragma mark - Overload
 
--(int)contentSection
+-(NSInteger)contentSection
 {
     return 0;
 }
 
--(int)numberOfSections
+-(NSInteger)numberOfSections
 {
     return 1;
 }
 
--(int)numberOfCellsInNonContentSection:(NSInteger)section
+-(NSInteger)numberOfCellsInNonContentSection:(NSInteger)section
 {
     return 0;
 }

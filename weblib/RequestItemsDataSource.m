@@ -113,7 +113,7 @@
 {
     if (!comparator) return;
     
-    for (int i=0; i<_items.count; i++)
+    for (NSInteger i=0; i<_items.count; i++)
     {
         if (comparator(_items[i],item))
         {
@@ -128,7 +128,7 @@
 {
     if (!comparator || !modificationBlock) return;
     
-    for (int i=0; i<_items.count; i++)
+    for (NSInteger i=0; i<_items.count; i++)
     {
         if (comparator(_items[i]))
         {

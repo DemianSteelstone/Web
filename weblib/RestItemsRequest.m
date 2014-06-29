@@ -53,10 +53,10 @@
     if (self.itemsInRequest>0)
     {
         if (self.offsetParamsName.length)
-            [params setValue:[NSString stringWithFormat:@"%d",self.currentOffset]
+            [params setValue:[NSString stringWithFormat:@"%ld",(long)self.currentOffset]
                       forKey:self.offsetParamsName];
         if (self.countParamName.length)
-            [params setValue:[NSString stringWithFormat:@"%d",self.itemsInRequest]
+            [params setValue:[NSString stringWithFormat:@"%ld",(long)self.itemsInRequest]
                       forKey:self.countParamName];
     }
     

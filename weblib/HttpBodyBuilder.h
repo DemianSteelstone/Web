@@ -19,6 +19,6 @@
 
 -(void)finish;
 -(NSInputStream*)postBodyStream;
--(int)length;
+-(long long)length;
 
 @end

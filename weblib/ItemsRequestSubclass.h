@@ -10,7 +10,7 @@
 
 @interface ItemsRequestSubclass : ItemsRequest
 
-@property (nonatomic) int currentOffset;
+@property (nonatomic) NSInteger currentOffset;
 @property (nonatomic,copy) void (^portionLoadedBlock)(NSArray*,NSError*);
 
 -(void)beginRequesting;

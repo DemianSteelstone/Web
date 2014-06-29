@@ -18,7 +18,7 @@
     NSOutputStream *outputStream;
     NSData *outputData;
     
-    int totalBytes;
+    long long totalBytes;
     
     BOOL _streamToFile;
 }
@@ -124,7 +124,7 @@
     return [NSInputStream inputStreamWithData:[outputStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey]];
 }
 
--(int)length
+-(long long)length
 {
     return totalBytes;
 }

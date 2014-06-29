@@ -201,8 +201,8 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 			[connection cancel]; 
 			NSDictionary *errorInfo
 			= [NSDictionary dictionaryWithObject:[NSString stringWithFormat:
-												  NSLocalizedString(@"Server returned status code %d",@""),
-												  statusCode]
+												  NSLocalizedString(@"Server returned status code %ld",@""),
+												  (long)statusCode]
 										  forKey:NSLocalizedDescriptionKey];
 			NSError *statusError
 			= [NSError errorWithDomain:NSOSStatusErrorDomain

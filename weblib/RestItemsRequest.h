@@ -15,7 +15,7 @@
 @property (nonatomic,strong) NSDictionary *requestParams;
 @property (nonatomic,strong) NSString *countParamName;
 @property (nonatomic,strong) NSString *offsetParamsName;
-@property (nonatomic) int itemsInRequest;
+@property (nonatomic) NSInteger itemsInRequest;
 
 @property (nonatomic, copy) NSError*(^unexpectedContentErrorBuilder)(id content);
 
