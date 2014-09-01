@@ -67,6 +67,11 @@
     [self reloadContainer];
 }
 
+-(void)deleteItem:(NSDictionary*)item
+{
+    [_items removeObject:item];
+}
+
 -(void)reloadData
 {
     [self.itemsRequest cancel];

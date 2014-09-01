@@ -23,6 +23,7 @@
 @property (nonatomic,copy) NSArray* (^preprocessItemsBlock)(NSArray *items);
 
 -(void)addItems:(NSArray*)newItems;
+-(void)deleteItem:(NSDictionary*)item;
 
 -(void)reloadData;
 -(void)updateItem:(NSDictionary*)item withComparator:(BOOL (^)(NSDictionary* candidate, NSDictionary *newItem))comparator;
