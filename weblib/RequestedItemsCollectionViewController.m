@@ -139,6 +139,11 @@
     [dataSource addItems:newItems];
 }
 
+-(void)deleteItem:(NSDictionary*)item
+{
+    [dataSource deleteItem:item];
+}
+
 -(void)updateItem:(NSDictionary *)item withComparator:(BOOL (^)(NSDictionary *, NSDictionary *))comparator
 {
     [dataSource updateItem:item withComparator:comparator];
