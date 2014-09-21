@@ -67,12 +67,16 @@
 {
     request.params = [self paramsForCurrentPortion];
     
-    __weak typeof(self) pself = self;
+    __weak typeof(self) weakSelf = self;
     
     [request send:^(RestResponse *response) {
+        typeof(self) strongSelf = weakSelf;
+        if (strongSelf == nil)
+            return;
+        
         if (response.error)
         {
-            [pself errorInRequest:response.error];
+            [strongSelf errorInRequest:response.error];
             return;
         }
         
@@ -81,7 +85,7 @@
         id parsedObject = [response parsedBody:&error];
         if (error)
         {
-            [pself errorInRequest:error];
+            [strongSelf errorInRequest:error];
             return;
         }
         
@@ -91,19 +95,19 @@
             
             if (newItems.count)
             {
-                pself.currentOffset+=pself.itemsInRequest;
+                strongSelf.currentOffset += strongSelf.itemsInRequest;
             }
             
-            if (!newItems.count || pself.itemsInRequest<=0)
+            if (!newItems.count || strongSelf.itemsInRequest<=0)
             {
-                [pself stopRequesting];
+                [strongSelf stopRequesting];
             }
             
-            pself.portionLoadedBlock(newItems,nil);
+            strongSelf.portionLoadedBlock(newItems,nil);
         }
-        else if (pself.unexpectedContentErrorBuilder)
+        else if (strongSelf.unexpectedContentErrorBuilder)
         {
-            [pself errorInRequest:pself.unexpectedContentErrorBuilder(parsedObject)];
+            [strongSelf errorInRequest:strongSelf.unexpectedContentErrorBuilder(parsedObject)];
             return;
         }
     }];
