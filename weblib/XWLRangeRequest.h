@@ -17,6 +17,9 @@
 
 @property (nonatomic,copy) void (^requestPresetBlock)(NSMutableURLRequest *request);
 
--(NSData*)sendRequestRange:(NSRange)range;
+-(NSData*)requestRange:(NSRange)range;
+-(long long)requestSize;
+
+-(BOOL)isValidResponde;
 
 @end
