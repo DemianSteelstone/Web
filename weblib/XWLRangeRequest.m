@@ -11,21 +11,19 @@
 @implementation XWLRangeRequest
 {
     NSURL *_url;
-    NSRange _range;
 }
 
--(instancetype)initWithURL:(NSURL *)url range:(NSRange)range
+-(instancetype)initWithURL:(NSURL *)url
 {
     if (self = [super init])
     {
         _url = url;
-        _range = range;
     }
     
     return self;
 }
 
--(NSData*)sendRequest
+-(NSData*)sendRequestRange:(NSRange)range
 {
     _resultError = nil;
     _resultResponse = nil;
@@ -34,7 +32,7 @@
     if (self.requestPresetBlock)
         self.requestPresetBlock(request);
     
-    NSString *rangeString = [NSString stringWithFormat:@"bytes=%lu-%lu", (unsigned long)_range.location, (unsigned long)_range.location+_range.length-1];
+    NSString *rangeString = [NSString stringWithFormat:@"bytes=%lu-%lu", (unsigned long)range.location, (unsigned long)range.location+range.length-1];
     [request setValue:rangeString forHTTPHeaderField:@"Range"];
     
     NSURLResponse *response = nil;
