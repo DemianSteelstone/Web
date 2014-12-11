@@ -15,7 +15,7 @@
 @property (nonatomic,strong,readonly) NSURLResponse *resultResponse;
 @property (nonatomic,strong,readonly) NSError *resultError;
 
-@property (nonatomic,copy) void (^requestPresetBlock)(NSMutableURLRequest *request, void (^finishBlock)());
+@property (nonatomic,copy) void (^requestPresetBlock)(NSMutableURLRequest *request);
 
 -(NSData*)requestRange:(NSRange)range;
 -(long long)requestSize;

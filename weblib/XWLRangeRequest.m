@@ -26,15 +26,8 @@
 -(NSMutableURLRequest*)buildRequest
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_url];
-    
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (self.requestPresetBlock)
-            self.requestPresetBlock(request,^{
-                dispatch_semaphore_signal(semaphore);
-            });
-    });
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    if (self.requestPresetBlock)
+        self.requestPresetBlock(request);
     
     return request;
 }
