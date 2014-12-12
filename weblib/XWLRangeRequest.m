@@ -25,7 +25,7 @@
 
 -(NSMutableURLRequest*)buildRequest
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_url];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
     if (self.requestPresetBlock)
         self.requestPresetBlock(request);
     
