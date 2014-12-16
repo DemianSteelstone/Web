@@ -18,8 +18,11 @@ NSString * const XWLErrorDomain = @"XWLErrorDomain";
 @implementation XWLRangeRequest
 {
     NSURL *_url;
+    NSURLResponse *_resultResponse;
+    NSError *_resultError;
     
     dispatch_semaphore_t _syncSemaphore;
+    dispatch_queue_t _syncQueue;
     
     NSMutableData *_data;
 }
@@ -31,6 +34,8 @@ NSString * const XWLErrorDomain = @"XWLErrorDomain";
         _url = url;
         
         _syncSemaphore = dispatch_semaphore_create(0);
+        _syncQueue = dispatch_queue_create("com.macsoftex.XWLRangeRequest.sync", 0);
+        
         _connectionQueue = [[NSOperationQueue alloc] init];
         _connectionQueue.maxConcurrentOperationCount = 1;
     }
@@ -47,56 +52,63 @@ NSString * const XWLErrorDomain = @"XWLErrorDomain";
     return request;
 }
 
--(NSData*)requestRange:(NSRange)range
+-(NSData*)requestRange:(NSRange)range response:(NSURLResponse**)response error:(NSError**)error
 {
     NSMutableURLRequest *request = [self buildRequest];
     
     NSString *rangeString = [NSString stringWithFormat:@"bytes=%lu-%lu", (unsigned long)range.location, (unsigned long)range.location+range.length-1];
     [request setValue:rangeString forHTTPHeaderField:@"Range"];
     
-    return [self sendRequest:request];
+    return [self sendRequest:request response:response error:error];
 }
 
--(NSData*)sendRequest:(NSURLRequest*)request
+-(NSData*)sendRequest:(NSURLRequest*)request response:(NSURLResponse**)response error:(NSError**)error
 {
-    _resultResponse = nil;
-    _resultError = nil;
+    __block NSData *result = nil;
     
-    _data = [NSMutableData data];
+    dispatch_sync(_syncQueue, ^{
+        _resultResponse = nil;
+        _resultError = nil;
+        
+        _data = [NSMutableData data];
+        
+        _connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
+        [_connection setDelegateQueue:_connectionQueue];
+        [_connection start];
+        
+        dispatch_semaphore_wait(_syncSemaphore, DISPATCH_TIME_FOREVER);
+        
+        result = [_data copy];
+        
+        if (response != NULL)
+            *response = _resultResponse;
+        if (error != NULL)
+            *error = _resultError;
+    });
     
-    __weak typeof(self) weakSelf = self;
-    [_connectionQueue addOperationWithBlock:^{
-        weakSelf.connection = [[NSURLConnection alloc] initWithRequest:request delegate:weakSelf startImmediately:NO];
-        [weakSelf.connection setDelegateQueue:weakSelf.connectionQueue];
-        [weakSelf.connection start];
-    }];
-    
-    dispatch_semaphore_wait(_syncSemaphore, DISPATCH_TIME_FOREVER);
-    
-    return _data;
+    return result;
 }
 
 -(long long)requestSize
 {
-    _resultError = nil;
-    _resultResponse = nil;
-    
     NSMutableURLRequest *request = [self buildRequest];
     [request setHTTPMethod:@"HEAD"];
-    [self sendRequest:request];
     
-    NSHTTPURLResponse *response = (NSHTTPURLResponse*)self.resultResponse;
+    NSURLResponse *response = nil;
+    NSError *error = nil;
     
-    if (![self isValidResponde])
+    [self sendRequest:request response:&response error:&error];
+    
+    if (error !=nil || ![XWLRangeRequest isValidResponde:response])
         return -1;
     
     return response.expectedContentLength;
 }
 
--(BOOL)isValidResponde
++(BOOL)isValidResponde:(NSURLResponse*)response
 {
-    NSHTTPURLResponse *response = (NSHTTPURLResponse*)self.resultResponse;
-    return response.statusCode>=200 && response.statusCode<300;
+    NSHTTPURLResponse *urlResponse = (NSHTTPURLResponse*)response;
+    return urlResponse.statusCode>=200 && urlResponse.statusCode<300;
 }
 
 -(void)didEndWithError:(NSError*)error

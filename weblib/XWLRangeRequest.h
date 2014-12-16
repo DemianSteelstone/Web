@@ -14,15 +14,12 @@ extern NSString * const XWLErrorDomain;
 
 -(instancetype)initWithURL:(NSURL*)url;
 
-@property (nonatomic,strong,readonly) NSURLResponse *resultResponse;
-@property (nonatomic,strong,readonly) NSError *resultError;
-
 @property (nonatomic,copy) void (^requestPresetBlock)(NSMutableURLRequest *request);
 @property (nonatomic,copy) NSURLCredential* (^credentialForChallenge)(NSURLAuthenticationChallenge *challenge);
 
--(NSData*)requestRange:(NSRange)range;
+-(NSData*)requestRange:(NSRange)range response:(NSURLResponse**)response error:(NSError**)error;
 -(long long)requestSize;
 
--(BOOL)isValidResponde;
++(BOOL)isValidResponde:(NSURLResponse*)response;
 
 @end
