@@ -8,6 +8,8 @@
 
 #import "MDPFileCategory.h"
 
+extern NSString * const XWLErrorDomain;
+
 @interface XWLRangeRequest : MDPFileCategory
 
 -(instancetype)initWithURL:(NSURL*)url;
@@ -16,6 +18,7 @@
 @property (nonatomic,strong,readonly) NSError *resultError;
 
 @property (nonatomic,copy) void (^requestPresetBlock)(NSMutableURLRequest *request);
+@property (nonatomic,copy) NSURLCredential* (^credentialForChallenge)(NSURLAuthenticationChallenge *challenge);
 
 -(NSData*)requestRange:(NSRange)range;
 -(long long)requestSize;
