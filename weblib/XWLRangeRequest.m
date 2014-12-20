@@ -25,6 +25,8 @@ NSString * const XWLErrorDomain = @"XWLErrorDomain";
     dispatch_queue_t _syncQueue;
     
     NSMutableData *_data;
+    
+    long long _fileSize;
 }
 
 -(instancetype)initWithURL:(NSURL *)url
@@ -38,9 +40,38 @@ NSString * const XWLErrorDomain = @"XWLErrorDomain";
         
         _connectionQueue = [[NSOperationQueue alloc] init];
         _connectionQueue.maxConcurrentOperationCount = 1;
+        
+        _fileSize = -1;
     }
     
     return self;
+}
+
+-(void)parseFileSize:(NSURLResponse*)response
+{
+    if (_fileSize > 0)
+        return;
+    
+    NSError *error;
+    
+    NSRegularExpression *regexp = [NSRegularExpression regularExpressionWithPattern:@".*?-.*?/(.*)"
+                                                                            options:NSRegularExpressionCaseInsensitive
+                                                                              error:&error];
+    
+    if (error)
+        return;
+    
+    NSHTTPURLResponse *urlResponse = (NSHTTPURLResponse*)response;
+    NSString *rangeString = urlResponse.allHeaderFields[@"Content-Range"];
+    
+    NSTextCheckingResult *match = [regexp firstMatchInString:rangeString options:0 range:NSMakeRange(0, rangeString.length)];
+    if (match.numberOfRanges>1)
+    {
+        _fileSize = [[rangeString substringWithRange:[match rangeAtIndex:1]] longLongValue];
+        if (_fileSize<=0)
+            _fileSize = -1;
+    }
+
 }
 
 -(NSMutableURLRequest*)buildRequest
@@ -84,6 +115,9 @@ NSString * const XWLErrorDomain = @"XWLErrorDomain";
             *response = _resultResponse;
         if (error != NULL)
             *error = _resultError;
+        
+        if (_resultError == nil)
+            [self parseFileSize:_resultResponse];
     });
     
     return result;
@@ -91,18 +125,20 @@ NSString * const XWLErrorDomain = @"XWLErrorDomain";
 
 -(long long)requestSize
 {
-    NSMutableURLRequest *request = [self buildRequest];
-    [request setHTTPMethod:@"HEAD"];
+    if (_fileSize > 0)
+        return _fileSize;
     
     NSURLResponse *response = nil;
     NSError *error = nil;
     
-    [self sendRequest:request response:&response error:&error];
+    [self requestRange:NSMakeRange(0,256) response:&response error:&error];
     
     if (error !=nil || ![XWLRangeRequest isValidResponde:response])
         return -1;
     
-    return response.expectedContentLength;
+    [self parseFileSize:response];
+    
+    return _fileSize;
 }
 
 +(BOOL)isValidResponde:(NSURLResponse*)response
@@ -117,9 +153,7 @@ NSString * const XWLErrorDomain = @"XWLErrorDomain";
     dispatch_semaphore_signal(_syncSemaphore);
 }
 
-- (void)cancelWithCode:(NSInteger)code {
-    [self willChangeValueForKey:@"isCancelled"];
-    
+- (void)cancelWithCode:(NSInteger)code {    
     [_connection cancel];
     
     NSString *errorLocalDes=nil;
@@ -150,12 +184,14 @@ NSString * const XWLErrorDomain = @"XWLErrorDomain";
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
     _resultResponse = response;
     
-    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+    if ([response isKindOfClass:[NSHTTPURLResponse class]])
+    {
         NSInteger code = [(NSHTTPURLResponse *)response statusCode];
         //        NSDictionary *dic=connection.currentRequest.allHTTPHeaderFields;
         //        NSLog(@"header:%@",dic);
         
-        if (code >= 400) {
+        if (code >= 400)
+        {
             [self cancelWithCode:code];
             return;
         }
