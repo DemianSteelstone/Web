@@ -6,11 +6,11 @@
 //  Copyright (c) 2014 Macsoftex. All rights reserved.
 //
 
-#import "MDPFileCategory.h"
+#import <Foundation/Foundation.h>
 
 extern NSString * const XWLErrorDomain;
 
-@interface XWLRangeRequest : MDPFileCategory
+@interface XWLRangeRequest : NSObject
 
 -(instancetype)initWithURL:(NSURL*)url;
 
