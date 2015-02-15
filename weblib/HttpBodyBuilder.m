@@ -54,7 +54,7 @@
     totalBytes+=length;
 }
 
--(void)appendFile:(NSString*)path fileName:(NSString*)fileName fileKey:(NSString*)fileKey contentType:(NSString*)contentType
+-(void)appendURLFile:(NSURL*)path fileName:(NSString*)fileName fileKey:(NSString*)fileKey contentType:(NSString*)contentType
 {
     NSData *partHeader = [self partHeaderData:fileKey fileName:fileName contentType:contentType];
     NSData *endLine = [self endLine];
@@ -63,7 +63,7 @@
                length:partHeader.length];
     
     uint8_t *buffer = (uint8_t*)malloc(sizeof(uint8_t)*READ_CHUNK);
-    NSInputStream *input = [[NSInputStream alloc] initWithFileAtPath:path];
+    NSInputStream *input = [[NSInputStream alloc] initWithURL:path];
     [input open];
     while ([input hasBytesAvailable])
     {
@@ -75,6 +75,11 @@
     free(buffer);
     
     [self appendBytes:endLine.bytes length:endLine.length];
+}
+
+-(void)appendFile:(NSString*)path fileName:(NSString*)fileName fileKey:(NSString*)fileKey contentType:(NSString*)contentType
+{
+    [self appendURLFile:[NSURL fileURLWithPath:path] fileName:fileName fileKey:fileKey contentType:contentType];
 }
 
 -(void)appendData:(NSData*)data fileName:(NSString*)fileName fileKey:(NSString*)fileKey contentType:(NSString*)contentType

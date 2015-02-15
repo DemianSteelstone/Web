@@ -15,6 +15,7 @@
 -(id)initWithFileStream:(BOOL)streamToFile;
 
 -(void)appendFile:(NSString*)path fileName:(NSString*)fileName fileKey:(NSString*)fileKey contentType:(NSString*)contentType;
+-(void)appendURLFile:(NSURL*)path fileName:(NSString*)fileName fileKey:(NSString*)fileKey contentType:(NSString*)contentType;
 -(void)appendData:(NSData*)data fileName:(NSString*)fileName fileKey:(NSString*)fileKey contentType:(NSString*)contentType;
 
 -(void)finish;
