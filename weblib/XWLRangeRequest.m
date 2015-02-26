@@ -63,6 +63,11 @@ NSString * const XWLErrorDomain = @"XWLErrorDomain";
     
     NSHTTPURLResponse *urlResponse = (NSHTTPURLResponse*)response;
     NSString *rangeString = urlResponse.allHeaderFields[@"Content-Range"];
+    if (rangeString.length == 0)
+    {
+        _fileSize = response.expectedContentLength;
+        return;
+    }
     
     NSTextCheckingResult *match = [regexp firstMatchInString:rangeString options:0 range:NSMakeRange(0, rangeString.length)];
     if (match.numberOfRanges>1)
