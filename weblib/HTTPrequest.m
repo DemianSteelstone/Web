@@ -368,11 +368,12 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     [self stopTimeOut];
     
-    theConnection=nil;
-    receivedData=nil;
+    theConnection = nil;
+    receivedData = nil;
     dataFilePath = nil;
     
-    [outStream close],outStream=nil;
+    [outStream close];
+    outStream = nil;
     
     context = nil;
 }
