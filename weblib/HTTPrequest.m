@@ -103,7 +103,7 @@
 {
     NSString *test = [string stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     if ([test isEqualToString:string])
-        return [string stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
+        return [string stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     return string;
 }
 
