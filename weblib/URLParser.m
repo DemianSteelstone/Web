@@ -60,7 +60,7 @@
 		NSArray *kv = [pair componentsSeparatedByString:@"="];
 		NSString *val =
 		[[kv objectAtIndex:1]
-		 stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+		 stringByRemovingPercentEncoding];
 		
 		[params setObject:val forKey:[kv objectAtIndex:0]];
 	}
