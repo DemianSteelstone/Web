@@ -101,9 +101,9 @@
 
 -(NSString*)checkUrlAlreadyEncoded:(NSString*)string
 {
-    NSString *test = [string stringByRemovingPercentEncoding];
+    NSString *test = [string stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     if ([test isEqualToString:string])
-        return [string stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+        return [string stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
     return string;
 }
 
