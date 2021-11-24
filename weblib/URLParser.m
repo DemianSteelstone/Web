@@ -11,15 +11,14 @@
 
 @implementation URLParser
 
-+(NSString*)constructURL:(NSString*)baseUrl params:(NSDictionary*)params
-{
++ (NSString *)constructURL:(NSString *)baseUrl params:(NSDictionary *)params {
     if (!params) return baseUrl;
     
 	NSURL* parsedURL = [NSURL URLWithString:baseUrl];
-	NSString* queryPrefix = parsedURL.query ? @"&" : @"?";
+	NSString * queryPrefix = parsedURL.query ? @"&" : @"?";
 	
-	NSMutableArray* pairs = [NSMutableArray array];
-	for (NSString* key in [params keyEnumerator]) {
+	NSMutableArray * pairs = [NSMutableArray array];
+	for (NSString * key in [params keyEnumerator]) {
 		if (([[params valueForKey:key] isKindOfClass:[UIImage class]])
 			||([[params valueForKey:key] isKindOfClass:[NSData class]])) 
 		{
@@ -27,22 +26,19 @@
 		}
         
         id object = [params valueForKey:key];
-        if ([object isKindOfClass:[NSString class]])
-        {
+        if ([object isKindOfClass:[NSString class]]) {
             [pairs addObject:[NSString stringWithFormat:@"%@=%@", key, [object percentEncode]]];
         }
-        else
-        {
+        else {
             [pairs addObject:[NSString stringWithFormat:@"%@=%@", key, [object stringValue]]];
         }
 	}
-	NSString* query = [pairs componentsJoinedByString:@"&"];
+	NSString * query = [pairs componentsJoinedByString:@"&"];
 	
 	return [NSString stringWithFormat:@"%@%@%@", baseUrl, queryPrefix, query];
 }
 
-+(NSMutableDictionary*)parseURL:(NSString*)url
-{
++ (NSMutableDictionary *)parseURL:(NSString *)url {
 	NSString *queryPrefix = @"?";
 	if ([url rangeOfString:queryPrefix].location==NSNotFound)
 		queryPrefix = @"#";

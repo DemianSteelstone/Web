@@ -10,7 +10,7 @@
 
 @interface URLParser : NSObject
 
-+(NSString*)constructURL:(NSString*)baseURL params:(NSDictionary*)params;
-+(NSMutableDictionary*)parseURL:(NSString*)url;
++ (NSString *)constructURL:(NSString *)baseURL params:(NSDictionary *)params;
++ (NSMutableDictionary *)parseURL:(NSString *)url;
 
 @end

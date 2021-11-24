@@ -13,11 +13,10 @@
 #define TIMER_TIMEOUT 90
 
 @interface HTTPrequest(Private)
--(void)releaseAllItems;
+- (void)releaseAllItems;
 @end
 
-@implementation HTTPrequest
-{
+@implementation HTTPrequest {
     NSString *dataFilePath;
     
     NSOutputStream *outStream;
@@ -32,17 +31,14 @@
     id context;
 }
 
--(id)init
-{
-    if (self = [super init])
-    {
+- (instancetype)init {
+    if (self = [super init]) {
         _downloadToFile = NO;
     }
     return self;
 }
 
--(void)stopTimeOut
-{
+- (void)stopTimeOut {
 	if (timeOutTimer && [timeOutTimer isValid])
 	{
 		[timeOutTimer invalidate];
@@ -51,8 +47,7 @@
     timeOutTimer=nil;
 }
 
--(void)restartTimeOut
-{    
+- (void)restartTimeOut {    
 	[self stopTimeOut];
 	timeOutTimer = [NSTimer scheduledTimerWithTimeInterval:TIMER_TIMEOUT 
 													target:self 
@@ -61,13 +56,11 @@
 												   repeats:NO];
 }
 
--(void)prepareRequest:(NSString*)requestString
-{
+- (void)prepareRequest:(NSString *)requestString {
 	_rString = requestString;
 }
 
--(void)send
-{
+- (void)send {
 	if (_rString)
 	{
 		[self sendRequest:_rString];
@@ -75,20 +68,17 @@
 	}
 }
 
--(void)checkDownloadedBytes:(NSMutableURLRequest*)request
-{
+- (void)checkDownloadedBytes:(NSMutableURLRequest *)request {
     unsigned long long downloadedBytes = 0;
     NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:dataFilePath])
-    {
+    if ([fm fileExistsAtPath:dataFilePath]) {
         NSError *error = nil;
         NSDictionary *fileDictionary = [fm attributesOfItemAtPath:dataFilePath
                                                             error:&error];
         if (!error && fileDictionary)
             downloadedBytes = [fileDictionary fileSize];
         
-        if (downloadedBytes > 0)
-        {
+        if (downloadedBytes > 0) {
             [request setHTTPMethod:@"GET"];
             NSString *requestRange = [NSString stringWithFormat:@"bytes=%llu-", downloadedBytes];
             [request setValue:requestRange forHTTPHeaderField:@"Range"];
@@ -99,16 +89,14 @@
     }
 }
 
--(NSString*)checkUrlAlreadyEncoded:(NSString*)string
-{
-    NSString *test = [string stringByRemovingPercentEncoding];
+- (NSString *)checkUrlAlreadyEncoded:(NSString *)string {
+    NSString *test = [string stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     if ([test isEqualToString:string])
-        return [string stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+        return [string stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     return string;
 }
 
--(void)sendRequest:(NSString*)requestString
-{    
+- (void)sendRequest:(NSString *)requestString {    
     _downloadedBytes = 0;
 	    
     requestString = [self checkUrlAlreadyEncoded:requestString];
@@ -117,15 +105,12 @@
     [theRequest setValue:@"" forHTTPHeaderField:@"Accept-Encoding"];
     receivedData=nil;
     
-    if (!_downloadToFile)
-    {
+    if (!_downloadToFile) {
         receivedData=[[NSMutableData alloc] init];
     }
-    else
-    {
+    else {
         NSString *fileName = _tmpFileName;
-        if (!fileName)
-        {
+        if (!fileName) {
             fileName = [NSString stringWithFormat:@"%ld_%d.tmp",time(NULL),rand()];
             dataFilePath = [[FileSystem sharedFileSystem] cachesPathForFile:fileName];
         }
@@ -149,14 +134,12 @@
 	}
 }
 
--(void)cancel
-{
+- (void)cancel {
     [theConnection cancel];
     [self releaseAllItems];
 }
 
--(void)timeOut:(NSTimer*)timer
-{
+- (void)timeOut:(NSTimer *)timer {
 	if ([self.delegate respondsToSelector:@selector(httpRequest:error:)])
         [self.delegate httpRequest:self error:nil];
 
@@ -164,8 +147,7 @@
 }
 
 - (BOOL)connection:(NSURLConnection *)connection
-canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *) space 
-{
+canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *) space  {
 	if([[space authenticationMethod] 
 		isEqualToString:NSURLAuthenticationMethodServerTrust])
 	{
@@ -174,9 +156,8 @@ canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *) space
 	return NO;
 }
 
--(void)connection:(NSURLConnection *)connection
-didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
+- (void)connection:(NSURLConnection *)connection
+didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
 	if ([challenge previousFailureCount] == 0)
 	{
 		NSURLCredential *newCredential;
@@ -191,8 +172,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 }
 
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
-{
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
 	if ([response respondsToSelector:@selector(statusCode)])
 	{
 		NSInteger statusCode = [((NSHTTPURLResponse *)response) statusCode];
@@ -213,10 +193,9 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 			return;
 		}
         
-        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
         BOOL partialContent = NO;
-        if (statusCode == 206)
-        {
+        if (statusCode == 206) {
             NSString *range = [httpResponse.allHeaderFields valueForKey:@"Content-Range"];
             
             NSError *error = nil;
@@ -249,15 +228,13 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
                 }
             }
         }
-        else
-        {
+        else {
             _expectedContentLength = [response expectedContentLength];
             if (_expectedContentLength==NSURLResponseUnknownLength)
                 _expectedContentLength = 0;
         }
 
-        if (!partialContent)
-        {
+        if (!partialContent) {
             [[NSFileManager defaultManager] removeItemAtPath:dataFilePath error:NULL];
             _downloadedBytes = 0;
             _partialDownloadedSize = 0;
@@ -268,8 +245,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 	[self restartTimeOut];
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
-{
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
 	BOOL stopped = NO;
 	if (theConnection==nil)
 		stopped = YES;
@@ -278,12 +254,10 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 	{
 		// append the new data to the receivedData
 		// receivedData is declared as a method instance elsewhere
-        if (!_downloadToFile)
-        {
+        if (!_downloadToFile) {
             [receivedData appendData:data];  
         }
-        else
-        {
+        else {
             if (!outStream)
             {
                 outStream = [[NSOutputStream alloc] initToFileAtPath:dataFilePath append:YES];
@@ -308,8 +282,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 	}
 }
 
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
-{
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
 	BOOL stopped = NO;
 	if (theConnection==nil)
 		stopped = YES;
@@ -320,8 +293,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
         [self.delegate httpRequest:self error:error];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	BOOL stopped = NO;
 	if (theConnection==nil)
 		stopped = YES;
@@ -331,8 +303,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 		if ([self.delegate respondsToSelector:@selector(httpRequest:dataPortionAdded:)])
 			[self.delegate httpRequest:self dataPortionAdded:receivedData];
         
-        if (!_downloadToFile)
-        {
+        if (!_downloadToFile) {
             if (outStream)
             {
                 [outStream close];
@@ -352,8 +323,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
                 
             }	
         }
-        else
-        {
+        else {
             if ([self.delegate respondsToSelector:@selector(httpRequest:dataFileLoaded:)])
             {
                 [self.delegate httpRequest:self dataFileLoaded:dataFilePath];
@@ -364,8 +334,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
     [self releaseAllItems];
 }
 
--(void)releaseAllItems
-{
+- (void)releaseAllItems {
     [self stopTimeOut];
     
     theConnection = nil;
@@ -378,15 +347,13 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
     context = nil;
 }
 
--(BOOL)stoped
-{
+- (BOOL)stoped {
 	if (theConnection == nil) return YES;
 
 	return NO;
 }
 
--(void)dealloc
-{
+- (void)dealloc {
     self.tmpFileName = nil;
     [self cancel];
 }

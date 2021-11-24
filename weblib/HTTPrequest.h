@@ -25,19 +25,19 @@
 @property(nonatomic,readonly) long long downloadedBytes;
 @property(nonatomic,readonly) long long partialDownloadedSize;
 
--(void)prepareRequest:(NSString*)requestString;
--(void)sendRequest:(NSString*)requestString;
--(void)send;
--(void)cancel;
--(BOOL)stoped;
+- (void)prepareRequest:(NSString *)requestString;
+- (void)sendRequest:(NSString *)requestString;
+- (void)send;
+- (void)cancel;
+- (BOOL)stoped;
 
 @end
 
 
 @protocol HTTPrequestDelegate<NSObject>
 @optional
--(void)httpRequest:(HTTPrequest*)request error:(NSError*)errorCode;
--(void)httpRequest:(HTTPrequest*)request dataLoaded:(NSMutableData*)data;
--(void)httpRequest:(HTTPrequest *)request dataFileLoaded:(NSString*)path;
--(void)httpRequest:(HTTPrequest*)request dataPortionAdded:(NSMutableData*)data;
+- (void)httpRequest:(HTTPrequest *)request error:(NSError *)errorCode;
+- (void)httpRequest:(HTTPrequest *)request dataLoaded:(NSMutableData *)data;
+- (void)httpRequest:(HTTPrequest *)request dataFileLoaded:(NSString *)path;
+- (void)httpRequest:(HTTPrequest *)request dataPortionAdded:(NSMutableData *)data;
 @end
