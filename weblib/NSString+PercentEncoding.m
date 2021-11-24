@@ -10,15 +10,14 @@
 
 @implementation NSString (PercentEncoding)
 
--(NSString*)percentEncode
-{
+- (NSString *)percentEncode {
     CFStringRef escaped_value = CFURLCreateStringByAddingPercentEscapes(
                                                                         NULL, /* allocator */
                                                                         (__bridge CFStringRef)self,
                                                                         NULL, /* charactersToLeaveUnescaped */
                                                                         (CFStringRef)@"!*'();:@&=+$,/?%#[]\\",
                                                                         kCFStringEncodingUTF8);
-    NSString *returnValue = (__bridge NSString*)escaped_value;
+    NSString *returnValue = (__bridge NSString *)escaped_value;
     CFRelease(escaped_value);
     return returnValue;
 }

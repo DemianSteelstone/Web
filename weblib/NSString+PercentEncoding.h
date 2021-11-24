@@ -10,6 +10,6 @@
 
 @interface NSString (PercentEncoding)
 
--(NSString*)percentEncode;
+- (NSString *)percentEncode;
 
 @end
